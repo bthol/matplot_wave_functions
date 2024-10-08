@@ -7,22 +7,24 @@ x = []
 y = []
 
 # Generic parameters
-amplitude = 10
-frequency = 5
+amplitude = 1
+frequency = 1
 start_window = 0
 end_window = 10
-phaze_shift = 5
-sample_rate = 1
+phaze_shift = 10
+sample_rate = 100
 
 # parameters for function transformation
-x_shift = 0
-y_shift = 0
+x_shift = 0 # x-phaze
+y_shift = 0 # y-phaze
+
 # negative values reflect opposite of positive
 x_reflect = 1
 y_reflect = 1
+
 # compresses : x > 1 and stretch : 0 < x < 1
 # NOTE: use postive values for compress parameters to avoid double negatives with reflect parameters
-x_compress = 1
+x_compress = 1 # controls wave frequency
 y_compress = 1
 
 # Parameters for pulse wave
@@ -30,12 +32,12 @@ pulse_period = 2
 pulse_frequency = 5
 pulse_amplitude = 20
 
-
 # sine wave function
 def sine_wave(amplitude, frequency, x_shift, y_shift, x_reflect, y_reflect, x_compress, y_compress, start_window = 0, end_window = 10):
   for i in range(start_window, end_window + 1):
-    x.append(i)
-    y.append(y_reflect * y_compress * ((math.sin(x_reflect * x_compress * i + x_shift) * amplitude) + y_shift))
+    for j in range(1, sample_rate):
+      x.append(i + j / sample_rate)
+      y.append(y_reflect * y_compress * ((math.sin(x_reflect * x_compress * ( i + j / sample_rate ) + x_shift) * amplitude) + y_shift))
 
 # smooth pulse wave function
 def pulse_wave_smooth(pulse_period, pulse_frequency, pulse_amplitude, start_window = 0, end_window = 10):
@@ -97,7 +99,6 @@ sine_wave(amplitude, frequency, x_shift, y_shift, x_reflect, y_reflect, x_compre
 # random_wave(amplitude, start_window, end_window)
 
 # phaze function
-# Note: phaze function does not work for sharp pulse wave
 def phaze(ls, phaze):
   phazed = []
   multiplier = int((phaze / len(ls)) - (phaze / len(ls) % 1))
@@ -113,6 +114,7 @@ def phaze(ls, phaze):
     else:
       phazed.append(ls[(len(ls) * multiplier) + i - phaze])
   return phazed
+# x = phaze(x, phaze_shift)
 # y = phaze(y, phaze_shift)
 
 # Render Display
